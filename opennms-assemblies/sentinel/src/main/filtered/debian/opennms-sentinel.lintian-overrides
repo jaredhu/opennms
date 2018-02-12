@@ -1,0 +1,4 @@
+opennms-sentinel: misplaced-extra-member-in-deb
+opennms-sentinel: debian-revision-should-not-be-zero
+opennms-sentinel: debian-revision-not-well-formed
+opennms-sentinel: empty-binary-package

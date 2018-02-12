@@ -1,0 +1,5 @@
+opennms-sentinel-features-default: misplaced-extra-member-in-deb
+opennms-sentinel-features-default: debian-revision-should-not-be-zero
+opennms-sentinel-features-default: debian-revision-not-well-formed
+opennms-sentinel-features-default: unknown-java-class-version
+opennms-sentinel-features-default: package-has-long-file-name

@@ -1,0 +1,6 @@
+opennms-sentinel-container: misplaced-extra-member-in-deb
+opennms-sentinel-container: debian-revision-should-not-be-zero
+opennms-sentinel-container: debian-revision-not-well-formed
+opennms-sentinel-container: executable-not-elf-or-script usr/share/sentinel/bin/contrib/karaf-*
+opennms-sentinel-container: unknown-java-class-version
+opennms-sentinel-container: codeless-jar usr/share/sentinel/system/org/apache/aries/blueprint/org.apache.aries.blueprint.core.compatibility/1.0.0/org.apache.aries.blueprint.core.compatibility-1.0.0.jar

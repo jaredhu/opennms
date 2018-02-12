@@ -1,0 +1,38 @@
+Source: opennms-sentinel
+Maintainer: Benjamin Reed <ranger@opennms.org>
+Section: contrib/net
+Priority: optional
+Standards-Version: 3.9.2
+Build-Depends: debhelper (>= 9), oracle-java8-installer | openjdk-8-jdk | java8-jdk, rsync
+
+Package: opennms-sentinel
+Architecture: all
+Depends: opennms-minion-features-default (=${binary:Version})
+Description: distributed OpenNMS telemetry processor
+ OpenNMS Sentinel is a container for distributed telemetry data processing.
+ .
+ http://www.opennms.org/wiki/Sentinel
+
+Package: opennms-sentinel-container
+Architecture: all
+Depends: oracle-java8-installer | openjdk-8-jre | java8-runtime | java8-runtime-headless, adduser, openssh-client, uuid-runtime, sudo, jicmp (>= 2.0.0), jicmp6 (>= 2.0.0)
+Description: distributed OpenNMS telemetry processor (main container)
+ OpenNMS Sentinel is a container for distributed telemetry data processing.
+ .
+ http://www.opennms.org/wiki/Sentinel
+
+Package: opennms-sentinel-features-core
+Architecture: all
+Depends: opennms-sentinel-container (=${binary:Version})
+Description: distributed OpenNMS telemetry processor (core features)
+ OpenNMS Sentinel is a container for distributed telemetry data processing.
+ .
+ http://www.opennms.org/wiki/Sentinel
+
+Package: opennms-sentinel-features-default
+Architecture: all
+Depends: opennms-sentinel-features-core (=${binary:Version})
+Description: distributed OpenNMS telemetry processor (default features)
+ OpenNMS Sentinel is a container for distributed telemetry data processing.
+ .
+ http://www.opennms.org/wiki/Sentinel

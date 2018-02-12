@@ -1,0 +1,72 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE=1
+export JAVA_HOME=$(shell bin/find-java.sh 1.8 1.8.9999)
+export PACKAGE_NAME="opennms-sentinel"
+export CONTAINER_NAME="opennms-sentinel-container"
+
+export SENTINEL_PREFIX=/usr/share/sentinel
+export RUNTIME_PREFIX=/var/lib/sentinel
+export REPO_PREFIX=$(SENTINEL_PREFIX)/repositories
+export LOGDIR=/var/log/sentinel
+export SYSCONFDIR=/etc/default
+export ETCDIR=/etc/sentinel
+
+%:
+	dh $@
+
+override_dh_auto_install:
+	# make all the target directories
+	mkdir -p \
+		$$(pwd)/debian/$(PACKAGE_NAME)-{container,features-core,features-default}$(SENTINEL_PREFIX) \
+		$$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX) \
+		$$(pwd)/debian/$(CONTAINER_NAME)$(RUNTIME_PREFIX) \
+		$$(pwd)/debian/$(CONTAINER_NAME)$(LOGDIR) \
+		$$(pwd)/debian/$(CONTAINER_NAME)$(SYSCONFDIR)
+	
+	# copy all the files from the build tarball
+	rsync -avr --exclude=debian $$(pwd)/ $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/
+	
+	# translate Minion prefix and etc directories in the init script, and put it in place
+	sed -e "s,/opt/sentinel/etc,$(SYSCONFDIR),g" \
+			-e "s,RUNAS=root,RUNAS=sentinel,g" \
+			-e "s,/opt/sentinel,$(SENTINEL_PREFIX),g" \
+			$$(pwd)/etc/sentinel.init > $$(pwd)/debian/$(CONTAINER_NAME).sentinel.init \
+		&& rm -f $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/etc/sentinel.init
+	
+	# move etc / data / deploy directories to where they will live
+	mv $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/etc $$(pwd)/debian/$(CONTAINER_NAME)$(ETCDIR) \
+		&& ln -s ../../..$(ETCDIR) $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/etc \
+		&& mv $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/data $$(pwd)/debian/$(CONTAINER_NAME)$(RUNTIME_PREFIX)/ \
+		&& ln -s ../../..$(RUNTIME_PREFIX)/data $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/data \
+		&& mv $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/deploy $$(pwd)/debian/$(CONTAINER_NAME)$(RUNTIME_PREFIX)/ \
+		&& ln -s ../../..$(RUNTIME_PREFIX)/deploy $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/deploy \
+	
+	# take care of some packaging/lintian warnings
+	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)/usr/share/lintian/overrides
+	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME).lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)/usr/share/lintian/overrides/$(PACKAGE_NAME)
+	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-container/usr/share/lintian/overrides
+	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME)-container.lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)-container/usr/share/lintian/overrides/$(PACKAGE_NAME)-container
+	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-core/usr/share/lintian/overrides
+	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME)-features-core.lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)-features-core/usr/share/lintian/overrides/$(PACKAGE_NAME)-features-core
+	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-default/usr/share/lintian/overrides
+	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME)-features-default.lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)-features-default/usr/share/lintian/overrides/$(PACKAGE_NAME)-features-default
+	rm -rf $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/COPYING
+	
+	# move the sentinel.conf to /etc/defaults and change the default RUNAS to sentinel
+	sed -e "s,RUNAS=root,RUNAS=sentinel,g" $$(pwd)/debian/$(CONTAINER_NAME)$(ETCDIR)/sentinel.conf > $$(pwd)/debian/$(CONTAINER_NAME)$(SYSCONFDIR)/sentinel \
+		&& rm -rf $$(pwd)/debian/$(CONTAINER_NAME)$(ETCDIR)/sentinel.conf
+	
+	# change the logging directory to /var/log/sentinel
+	sed -e "s,.{karaf.data}/log,$(LOGDIR),g" -e 's,karaf.log,sentinel.log,g' $$(pwd)/etc/org.ops4j.pax.logging.cfg > $$(pwd)/debian/$(CONTAINER_NAME)$(ETCDIR)/org.ops4j.pax.logging.cfg
+	
+	# split out opennms-sentinel-features-core
+	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-core$(REPO_PREFIX)
+	mv $$(pwd)/debian/$(CONTAINER_NAME)$(REPO_PREFIX)/core $$(pwd)/debian/$(PACKAGE_NAME)-features-core$(REPO_PREFIX)/core
+	
+	# split out opennms-sentinel-features-default
+	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-default$(REPO_PREFIX)
+	mv $$(pwd)/debian/$(CONTAINER_NAME)$(REPO_PREFIX)/default $$(pwd)/debian/$(PACKAGE_NAME)-features-default$(REPO_PREFIX)/default
+	
+	# install the init script
+	dh_installinit --package=$(CONTAINER_NAME) --name=sentinel --no-start -u"defaults 21 19"
