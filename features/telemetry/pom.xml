@@ -18,5 +18,6 @@
     <module>itests</module>
     <module>listeners</module>
     <module>minion</module>
+    <module>repository</module>
   </modules>
 </project>
