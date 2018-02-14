@@ -1,4 +1,0 @@
-opennms-sentinel-features-core: misplaced-extra-member-in-deb
-opennms-sentinel-features-core: debian-revision-should-not-be-zero
-opennms-sentinel-features-core: debian-revision-not-well-formed
-opennms-sentinel-features-core: unknown-java-class-version

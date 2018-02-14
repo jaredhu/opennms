@@ -90,6 +90,12 @@
                   <type>tar.gz</type>
                   <outputDirectory>${project.build.directory}/unpacked/repositories/default</outputDirectory>
                 </artifactItem>
+                <!--
+                  We don't need to the minion-core features on Sentinel:
+                    minion-core
+                    minion-jms
+                    minion-core-shell
+
                 <artifactItem>
                   <groupId>org.opennms.features.minion</groupId>
                   <artifactId>core-repository</artifactId>
@@ -98,6 +104,7 @@
                   <type>tar.gz</type>
                   <outputDirectory>${project.build.directory}/unpacked/repositories/core</outputDirectory>
                 </artifactItem>
+                -->
                 <artifactItem>
                   <groupId>org.opennms</groupId>
                   <artifactId>opennms-base-assembly</artifactId>
@@ -169,13 +176,6 @@
       <groupId>org.opennms.features.minion.container</groupId>
       <artifactId>karaf</artifactId>
       <version>${project.version}</version>
-      <type>tar.gz</type>
-    </dependency>
-    <dependency>
-      <groupId>org.opennms.features.minion</groupId>
-      <artifactId>core-repository</artifactId>
-      <version>${project.version}</version>
-      <classifier>repo</classifier>
       <type>tar.gz</type>
     </dependency>
     <dependency>

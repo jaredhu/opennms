@@ -228,8 +228,11 @@ rm -rf "${ROOT_INST}/repositories/.local"
 %{minionrepoprefix}/default
 
 %post features-default
+ROOT_INST="${RPM_INSTALL_PREFIX0}"
+[ -z "${ROOT_INST}" ] && ROOT_INST="%{minioninstprefix}"
+
 # Remove the directory used as the local Maven repo cache
-rm -rf %{minionrepoprefix}/.local
+rm -rf "${ROOT_INST}/repositories/.local"
 
 %preun -p /bin/bash container
 ROOT_INST="${RPM_INSTALL_PREFIX0}"

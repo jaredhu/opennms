@@ -82,25 +82,13 @@ Sentinel Container
 %{extrainfo}
 %{extrainfo2}
 
-%package features-core
-Summary:        Sentinel Core Features
-Group:          Applications/System
-Requires(pre):  %{name}-container = %{version}-%{release}
-Requires:       %{name}-container = %{version}-%{release}
-Requires(post): util-linux
-Requires:       util-linux
-
-%description features-core
-Sentinel Core Features
-
-%{extrainfo}
-%{extrainfo2}
-
 %package features-default
 Summary:       Sentinel Default Features
 Group:         Applications/System
-Requires(pre): %{name}-features-core = %{version}-%{release}
-Requires:      %{name}-features-core = %{version}-%{release}
+Requires(pre): %{name}-container = %{version}-%{release}
+Requires:      %{name}-container = %{version}-%{release}
+Requires(post): util-linux
+Requires:       util-linux
 
 %description features-default
 Sentinel Default Features
@@ -195,24 +183,16 @@ if [ ! -f "${ROOT_INST}/etc/host.key" ]; then
     chown sentinel:sentinel "${ROOT_INST}/etc/"host.key*
 fi
 
-%files features-core
-%defattr(644 sentinel sentinel 755)
-%{sentinelrepoprefix}/core
-
-%post features-core
-ROOT_INST="${RPM_INSTALL_PREFIX0}"
-[ -z "${ROOT_INST}" ] && ROOT_INST="%{sentinelinstprefix}"
-
-# Remove the directory used as the local Maven repo cache
-rm -rf "${ROOT_INST}/repositories/.local"
-
 %files features-default
 %defattr(644 sentinel sentinel 755)
 %{sentinelrepoprefix}/default
 
 %post features-default
+ROOT_INST="${RPM_INSTALL_PREFIX0}"
+[ -z "${ROOT_INST}" ] && ROOT_INST="%{sentinelinstprefix}"
+
 # Remove the directory used as the local Maven repo cache
-rm -rf %{sentinelrepoprefix}/.local
+rm -rf "${ROOT_INST}/repositories/.local"
 
 %preun -p /bin/bash container
 ROOT_INST="${RPM_INSTALL_PREFIX0}"

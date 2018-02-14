@@ -18,7 +18,7 @@ export ETCDIR=/etc/sentinel
 override_dh_auto_install:
 	# make all the target directories
 	mkdir -p \
-		$$(pwd)/debian/$(PACKAGE_NAME)-{container,features-core,features-default}$(SENTINEL_PREFIX) \
+		$$(pwd)/debian/$(PACKAGE_NAME)-{container,features-default}$(SENTINEL_PREFIX) \
 		$$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX) \
 		$$(pwd)/debian/$(CONTAINER_NAME)$(RUNTIME_PREFIX) \
 		$$(pwd)/debian/$(CONTAINER_NAME)$(LOGDIR) \
@@ -47,8 +47,6 @@ override_dh_auto_install:
 	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME).lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)/usr/share/lintian/overrides/$(PACKAGE_NAME)
 	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-container/usr/share/lintian/overrides
 	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME)-container.lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)-container/usr/share/lintian/overrides/$(PACKAGE_NAME)-container
-	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-core/usr/share/lintian/overrides
-	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME)-features-core.lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)-features-core/usr/share/lintian/overrides/$(PACKAGE_NAME)-features-core
 	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-default/usr/share/lintian/overrides
 	install -c -m 644 $$(pwd)/debian/$(PACKAGE_NAME)-features-default.lintian-overrides $$(pwd)/debian/$(PACKAGE_NAME)-features-default/usr/share/lintian/overrides/$(PACKAGE_NAME)-features-default
 	rm -rf $$(pwd)/debian/$(CONTAINER_NAME)$(SENTINEL_PREFIX)/COPYING
@@ -59,10 +57,6 @@ override_dh_auto_install:
 	
 	# change the logging directory to /var/log/sentinel
 	sed -e "s,.{karaf.data}/log,$(LOGDIR),g" -e 's,karaf.log,sentinel.log,g' $$(pwd)/etc/org.ops4j.pax.logging.cfg > $$(pwd)/debian/$(CONTAINER_NAME)$(ETCDIR)/org.ops4j.pax.logging.cfg
-	
-	# split out opennms-sentinel-features-core
-	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-core$(REPO_PREFIX)
-	mv $$(pwd)/debian/$(CONTAINER_NAME)$(REPO_PREFIX)/core $$(pwd)/debian/$(PACKAGE_NAME)-features-core$(REPO_PREFIX)/core
 	
 	# split out opennms-sentinel-features-default
 	mkdir -p $$(pwd)/debian/$(PACKAGE_NAME)-features-default$(REPO_PREFIX)

@@ -21,14 +21,6 @@ Description: distributed OpenNMS telemetry processor (main container)
  .
  http://www.opennms.org/wiki/Sentinel
 
-Package: opennms-sentinel-features-core
-Architecture: all
-Depends: opennms-sentinel-container (=${binary:Version})
-Description: distributed OpenNMS telemetry processor (core features)
- OpenNMS Sentinel is a container for distributed telemetry data processing.
- .
- http://www.opennms.org/wiki/Sentinel
-
 Package: opennms-sentinel-features-default
 Architecture: all
 Depends: opennms-sentinel-features-core (=${binary:Version})
