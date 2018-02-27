@@ -29,6 +29,8 @@
 package org.opennms.protocols.radius.monitor;
 
 import java.net.InetAddress;
+import java.security.Provider;
+import java.security.Security;
 import java.util.Map;
 
 import org.opennms.core.utils.ParameterMap;
@@ -132,6 +134,15 @@ public final class RadiusAuthMonitor extends AbstractServiceMonitor {
      * Default Inner Auth Type (ttls)
      */
     public static final String DEFAULT_TTLS_INNER_AUTH_TYPE= "pap";
+
+    static {
+        // This adds support for MD4 digest used by mschapv2 - NMS-9763
+        Security.addProvider(new Provider("MD4", 0.0D, "MD4 for Radius") {
+            {
+                this.put("MessageDigest.MD4", "jcifs.util.MD4");
+            }
+        });
+    }
 
     /**
      * Class constructor.

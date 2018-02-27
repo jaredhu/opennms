@@ -31,23 +31,11 @@ package org.opennms.protocols.radius.springsecurity;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-
-import net.jradius.client.RadiusClient;
-import net.jradius.client.auth.PAPAuthenticator;
-import net.jradius.client.auth.RadiusAuthenticator;
-import net.jradius.dictionary.Attr_UserName;
-import net.jradius.dictionary.Attr_UserPassword;
-import net.jradius.exception.RadiusException;
-import net.jradius.packet.AccessAccept;
-import net.jradius.packet.AccessRequest;
-import net.jradius.packet.RadiusPacket;
-import net.jradius.packet.attribute.AttributeFactory;
-import net.jradius.packet.attribute.AttributeList;
-import net.jradius.packet.attribute.RadiusAttribute;
-
 
 import org.opennms.core.utils.InetAddressUtils;
 import org.opennms.web.api.Authentication;
@@ -65,6 +53,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import net.jradius.client.RadiusClient;
+import net.jradius.client.auth.PAPAuthenticator;
+import net.jradius.client.auth.RadiusAuthenticator;
+import net.jradius.dictionary.Attr_UserName;
+import net.jradius.dictionary.Attr_UserPassword;
+import net.jradius.exception.RadiusException;
+import net.jradius.packet.AccessAccept;
+import net.jradius.packet.AccessRequest;
+import net.jradius.packet.RadiusPacket;
+import net.jradius.packet.attribute.AttributeFactory;
+import net.jradius.packet.attribute.AttributeList;
+import net.jradius.packet.attribute.RadiusAttribute;
+
 /**
  * An org.springframework.security.providers.AuthenticationProvider implementation that provides integration with a Radius server.
  *
@@ -74,6 +75,14 @@ public class RadiusAuthenticationProvider extends AbstractUserDetailsAuthenticat
 	
 	private static final Logger LOG = LoggerFactory.getLogger(RadiusAuthenticationProvider.class);
 
+    static {
+        // This adds support for MD4 digest used by mschapv2 - NMS-9763
+        Security.addProvider(new Provider("MD4", 0.0D, "MD4 for Radius") {
+            {
+                this.put("MessageDigest.MD4", "jcifs.util.MD4");
+            }
+        });
+    }
 
     private String server, secret;
     private int port = 1812, timeout = 5, retries = 3;

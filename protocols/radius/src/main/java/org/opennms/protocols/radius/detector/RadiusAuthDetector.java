@@ -28,6 +28,9 @@
 
 package org.opennms.protocols.radius.detector;
 
+import java.security.Provider;
+import java.security.Security;
+
 import org.opennms.netmgt.provision.support.BasicDetector;
 import org.opennms.netmgt.provision.support.Client;
 import org.opennms.netmgt.provision.support.RequestBuilder;
@@ -128,7 +131,16 @@ public class RadiusAuthDetector extends BasicDetector<CompositeAttributeLists, R
     private String m_password = DEFAULT_PASSWORD;
     private String m_ttlsInnerAuthType = DEFAULT_TTLS_INNER_AUTH_TYPE;
 	private String m_InnerIdentity = DEFAULT_INNER_IDENTITY;
-    
+
+    static {
+        // This adds support for MD4 digest used by mschapv2 - NMS-9763
+        Security.addProvider(new Provider("MD4", 0.0D, "MD4 for Radius") {
+            {
+                this.put("MessageDigest.MD4", "jcifs.util.MD4");
+            }
+        });
+    }
+
     /**
      * Default constructor
      */
