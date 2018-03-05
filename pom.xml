@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.opennms</groupId>
   <artifactId>opennms</artifactId>
-  <version>21.0.5-SNAPSHOT</version>
+  <version>22.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OpenNMS</name>
   <url>http://opennms.org/</url>
@@ -723,6 +723,19 @@
                     <execute></execute>
                 </action>
               </pluginExecution>
+              <pluginExecution>
+                <pluginExecutionFilter>
+                  <groupId>org.apache.karaf.tooling</groupId>
+                  <artifactId>karaf-maven-plugin</artifactId>
+                  <versionRange>[4.0,)</versionRange>
+                  <goals>
+                    <goal>assembly</goal>
+                  </goals>
+                </pluginExecutionFilter>
+                <action>
+                  <ignore/>
+                </action>
+              </pluginExecution>
             </pluginExecutions>
           </lifecycleMappingMetadata>
         </configuration>
@@ -912,7 +925,6 @@
             <!-- Turn off queuing in the RRD output -->
             <org.opennms.rrd.usequeue>false</org.opennms.rrd.usequeue>
             <java.awt.headless>true</java.awt.headless>
-            <mock.logLevel>${mock.logLevel}</mock.logLevel>
             <mock.debug>${mock.debug}</mock.debug>
             <mock.rundbtests>${mock.rundbtests}</mock.rundbtests>
             <mock.leaveDatabase>${mock.leaveDatabase}</mock.leaveDatabase>
@@ -1165,8 +1177,6 @@
     <antlr.version>2.7.7</antlr.version>
     <sass.maven.plugin.version>1.1.2-ONMS-20131018-1</sass.maven.plugin.version>
 
-    <!-- turn down the default DEBUG logLevel. Override on the command line if you want -->
-    <mock.logLevel>WARN</mock.logLevel>
     <mock.debug>false</mock.debug>
     <mock.rundbtests>true</mock.rundbtests>
     <mock.leaveDatabase>false</mock.leaveDatabase>
@@ -1180,7 +1190,7 @@
     <install.version>${project.version}</install.version>
     <display.version>${install.version}</display.version>
     <opennms.home>${dist.dir}/${dist.name}</opennms.home>
-    <opennms.osgi.version>21.0.5.SNAPSHOT</opennms.osgi.version>
+    <opennms.osgi.version>22.0.0.SNAPSHOT</opennms.osgi.version>
     <maven.metadata.legacy>true</maven.metadata.legacy>
     <root.dir>${project.basedir}</root.dir>
     <dist.dir>${root.dir}/target</dist.dir>
@@ -1307,6 +1317,7 @@
     <jnaVersion>4.4.0</jnaVersion>
     <jodaTimeVersion>2.1</jodaTimeVersion>
     <jrubyVersion>9.0.4.0</jrubyVersion>
+    <jsonVersion>20171018</jsonVersion>
     <jsoupVersion>1.7.2</jsoupVersion>
     <karafVersion>4.1.2</karafVersion>
     <felixVersion>3.0.0</felixVersion>
@@ -1331,6 +1342,7 @@
     <osgiEnterpriseVersion>5.0.0</osgiEnterpriseVersion>
     <owaspEncoderVersion>1.2.1</owaspEncoderVersion>
     <owaspHtmlSanitizerVersion>20170515.1</owaspHtmlSanitizerVersion>
+    <osgiJaxRsVersion>1.0.0-ONMS</osgiJaxRsVersion>
     <quartzVersion>2.2.3</quartzVersion>
     <rateLimitedLoggerVersion>1.1.0</rateLimitedLoggerVersion>
     <servletApiVersion>3.1.0</servletApiVersion>
@@ -1369,6 +1381,12 @@
     <pluginmanagerVersion>1.0.6</pluginmanagerVersion>
     <licencemanagerVersion>1.0.6</licencemanagerVersion>
     <featuremanagerVersion>1.0.6</featuremanagerVersion>
+
+    <!-- nodejs development -->
+    <frontendPluginVersion>1.6</frontendPluginVersion>
+    <nodeVersion>v8.9.3</nodeVersion>
+    <npmVersion>5.5.1</npmVersion>
+    <yarnVersion>v1.3.2</yarnVersion>
   </properties>
 
   <profiles>
@@ -1773,6 +1791,11 @@
       </dependency>
       <dependency>
         <groupId>org.opennms.core</groupId>
+        <artifactId>org.opennms.core.web-assets</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opennms.core</groupId>
         <artifactId>org.opennms.core.xml</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1985,6 +2008,11 @@
       <dependency>
         <groupId>org.opennms.features.collection</groupId>
         <artifactId>org.opennms.features.collection.collectors</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opennms.features.collection</groupId>
+        <artifactId>org.opennms.features.collection.core</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
