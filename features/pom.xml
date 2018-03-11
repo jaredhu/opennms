@@ -127,6 +127,7 @@
     <module>status</module>
     <module>system-report</module>
     <module>timeseries-evaluate</module>
+    <module>opennms-jstl-support</module>
 
     <!-- Business Service Monitor -->
     <module>bsm</module>
